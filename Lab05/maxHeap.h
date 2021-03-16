@@ -1,7 +1,6 @@
 #ifndef __MAXHEAP_H__
 #define __MAXHEAP_H__
 #include "Node.h"
-#include <math.h>
 using namespace std;
 class maxHeap {
 public:
@@ -11,7 +10,6 @@ public:
   void Insert(string name, float distance, int count_view);
   void LevelOrder();
   void heapify(Node *arr, int size, int i);
-  //   void Remove();
   void buildHeap();
   void SearchMostReviewedRestaurant();
   void RemoveMostReviewedRestaurant();
@@ -21,7 +19,7 @@ public:
   bool isEmpty();
   bool findName(string name, float distance, int count_review);
   void swap(Node *arr, int i, int j);
-  void Print(int index);
+  int GetHeight(Node *temp, int index);
 
 private:
   int size = 0;

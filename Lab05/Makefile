@@ -1,9 +1,9 @@
-objects = Node.o executive.o main.o minHeap.o maxHeap.o
+objects = Node.o minHeap.o maxHeap.o executive.o main.o 
 CFLAG = -std=c++11 -g -Wall
 CC = g++
 memorys = valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./main Input.txt
 
-all: main
+all:  main
 	./main Input.txt
 
 main: $(objects)

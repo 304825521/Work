@@ -1,9 +1,8 @@
 #include "maxHeap.h"
-#include "minHeap.h"
 #include <cmath>
 
 maxHeap::maxHeap() {
-  maxHeapArr = new Node[MAXSIZE + 1]();
+  maxHeapArr = new Node[MAXSIZE]();
   size = 0;
 }
 
@@ -23,29 +22,30 @@ bool maxHeap::isEmpty() {
 
 void maxHeap::LevelOrder() {
   //@done: print the heap
-  // int i = 1;
-  // int levelSize = 3;
-  // if (size > 0) {
-  //   std::cout << maxHeapArr[0].GetName() << "\n";
-  // }
-  // if (size > 1) {
-  //   while (i < size) {
-  //     do {
-  //       Print(i);
-  //       i = i + 3;
-  //     } while (i <= levelSize || maxHeapArr[i].GetCountView() == 0);
-  //     levelSize = levelSize * 3 + levelSize;
-  //     std::cout << "\n";
-  //   }
-  // }
-}
+  int height = GetHeight(maxHeapArr, 0);
+  for (int i = 1; i <= height; i++) {
+    if (i == 1) {
+      cout << maxHeapArr[0].GetName() << endl;
+    } else if (i >= 2) {
+      //@tag: maxNode in current Node
+      int maxNode = pow(3, i - 1);
+      int leftNodeIndex = 0;
+      int temp = 0;
+      for (int j = 1; j < i; j++) {
+        leftNodeIndex = 3 * temp + 1;
+        temp = leftNodeIndex;
+      }
+      // cout << "LeftNodeIndex: " << leftNodeIndex << endl;
+      int count = 0;
+      while (count < maxNode) {
+        if (maxHeapArr[count + leftNodeIndex].GetCountView() != 0) {
+          cout << maxHeapArr[leftNodeIndex + count].GetName() << ":";
+        }
 
-void maxHeap::Print(int index) {
-  int i = 0;
-  while (i < 3 && maxHeapArr[index].GetCountView() != 0) {
-    cout << maxHeapArr[index].GetName() << ":";
-    i++;
-    index++;
+        count++;
+      }
+      cout << endl;
+    }
   }
 }
 
@@ -116,8 +116,16 @@ void maxHeap::swap(Node *arr, int i, int j) {
                   arr[j].GetCountView());
   arr[j].SetValue(temp->GetName(), temp->GetDistance(), temp->GetCountView());
   temp->SetValue("", 0, 0);
-
   delete temp;
+}
+
+int maxHeap::GetHeight(Node *temp, int index) {
+  int height = 0;
+  while (temp[index].GetCountView() != 0) {
+    index = 3 * index + 1;
+    height++;
+  }
+  return height;
 }
 
 void maxHeap::buildHeap() { buildHeap(maxHeapArr, GetSize()); }

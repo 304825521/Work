@@ -2,6 +2,7 @@
 #define NODE_H
 #include <fstream>
 #include <iostream>
+#include <math.h>
 #include <stdexcept>
 #include <string>
 class Node {

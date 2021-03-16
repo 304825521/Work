@@ -1,18 +1,12 @@
 #include "minHeap.h"
 
 minHeap::minHeap() {
-  minNodeArr = new Node[MAXSIZE + 1]();
-  for (int i = 0; i < MAXSIZE; i++) {
-    minNodeArr[i].SetValue("", 0, 0);
-  }
+  minHeapArr = new Node[MAXSIZE]();
   size = 0;
 }
 
 void minHeap::Insert(string name, float distance, int count_view) {
-  if (findName(name)) {
-    throw 1;
-  }
-  minNodeArr[size].SetValue(name, distance, count_view);
+  minHeapArr[size].SetValue(name, distance, count_view);
   size++;
 }
 
@@ -25,10 +19,30 @@ bool minHeap::isEmpty() {
   return false;
 }
 
-void minHeap::printTest() {
-  for (int i = 0; i < GetSize(); i++) {
-    std::cout << minNodeArr[i].GetName() << "," << minNodeArr[i].GetDistance()
-              << "," << minNodeArr[i].GetCountView() << endl;
+void minHeap::LevelOrder() {
+  int height = GetHeight(minHeapArr, 0);
+  for (int i = 1; i <= height; i++) {
+    if (i == 1) {
+      cout << minHeapArr[0].GetName() << endl;
+    } else if (i >= 2) {
+      //@tag: minNode in current Node
+      int minNode = pow(3, i - 1);
+      int leftNodeIndex = 0;
+      int temp = 0;
+      for (int j = 1; j < i; j++) {
+        leftNodeIndex = 3 * temp + 1;
+        temp = leftNodeIndex;
+      }
+      // cout << "LeftNodeIndex: " << leftNodeIndex << endl;
+      int count = 0;
+      while (count < minNode) {
+        if (minHeapArr[count + leftNodeIndex].GetCountView() != 0) {
+          cout << minHeapArr[leftNodeIndex + count].GetName() << ":";
+        }
+        count++;
+      }
+      cout << endl;
+    }
   }
 }
 
@@ -39,31 +53,35 @@ void minHeap::heapify(Node *arr, int size, int i) {
   int c1 = 3 * i + 1;
   int c2 = 3 * i + 2;
   int c3 = 3 * i + 3;
-  int maxIndex = i;
-  if (c1 < size && arr[c1].GetDistance() > arr[maxIndex].GetDistance() &&
-      arr[c1].GetDistance() > arr[c2].GetDistance() &&
-      arr[c1].GetDistance() > arr[c3].GetDistance()) {
-    maxIndex = c1;
+  int minIndex = i;
+  if (c1 < size && arr[c1].GetDistance() < arr[minIndex].GetDistance() &&
+      arr[c1].GetDistance() < arr[c2].GetDistance() &&
+      arr[c1].GetDistance() < arr[c3].GetDistance()) {
+    minIndex = c1;
   }
-  if (c2 < size && arr[c2].GetDistance() > arr[maxIndex].GetDistance() &&
-      arr[c2].GetDistance() > arr[c1].GetDistance() &&
-      arr[c2].GetDistance() > arr[c3].GetDistance()) {
-    maxIndex = c2;
+  if (c2 < size && arr[c2].GetDistance() < arr[minIndex].GetDistance() &&
+      arr[c2].GetDistance() < arr[c1].GetDistance() &&
+      arr[c2].GetDistance() < arr[c3].GetDistance()) {
+    minIndex = c2;
   }
-  if (c3 < size && arr[c3].GetDistance() > arr[maxIndex].GetDistance() &&
-      arr[c3].GetDistance() > arr[c1].GetDistance() &&
-      arr[c3].GetDistance() > arr[c2].GetDistance()) {
-    maxIndex = c3;
+  if (c3 < size && arr[c3].GetDistance() < arr[minIndex].GetDistance() &&
+      arr[c3].GetDistance() < arr[c1].GetDistance() &&
+      arr[c3].GetDistance() < arr[c2].GetDistance()) {
+    minIndex = c3;
   }
-  if (maxIndex != i) {
-    swap(arr, maxIndex, i);
-    heapify(arr, size, maxIndex);
+  if (minIndex != i) {
+    swap(arr, minIndex, i);
+    heapify(arr, size, minIndex);
   }
 }
 
-bool minHeap::findName(string name) {
+void minHeap::buildHeap() { buildHeap(minHeapArr, GetSize()); }
+
+bool minHeap::findName(string name, float distance, int count_review) {
   for (int i = 0; i < size; i++) {
-    if (minNodeArr[i].GetName() == name) {
+    if (minHeapArr[i].GetName() == name &&
+        minHeapArr[i].GetDistance() == distance &&
+        minHeapArr[i].GetCountView() == count_review) {
       return true;
     }
   }
@@ -77,8 +95,44 @@ void minHeap::swap(Node *arr, int i, int j) {
   arr[i].SetValue(arr[j].GetName(), arr[j].GetDistance(),
                   arr[j].GetCountView());
   arr[j].SetValue(temp->GetName(), temp->GetDistance(), temp->GetCountView());
-  temp = nullptr;
+  temp->SetValue("", 0, 0);
   delete temp;
 }
 
-minHeap::~minHeap() { delete[] minNodeArr; }
+int minHeap::GetHeight(Node *temp, int index) {
+  int height = 0;
+  while (temp[index].GetCountView() != 0) {
+    index = 3 * index + 1;
+    height++;
+  }
+  return height;
+}
+
+void minHeap::buildHeap(Node *arr, int size) {
+  int last_node_Index = size - 1;
+  int parentNode = floor((last_node_Index - 1) / 3);
+  for (int i = parentNode; i >= 0; i--) {
+    heapify(arr, size, i);
+  }
+}
+
+void minHeap::SearchNearestRestaurant() {
+  cout << "Nearest restaurant: " << minHeapArr[0].GetName() << endl;
+  cout << "Distance " << minHeapArr[0].GetDistance() << " miles" << endl;
+  cout << "============================================\n";
+}
+
+void minHeap::RemoveNearestRestaurant() {
+  string name = minHeapArr[0].GetName();
+  int distance = minHeapArr[0].GetDistance();
+  cout << "Most reviewed restaurant:" << name << ":" << distance
+       << " has been removed.\n";
+  for (int i = 0; i < size; i++) {
+    swap(minHeapArr, i, i + 1);
+  }
+  minHeapArr[size].SetValue("", 0, 0);
+  size--;
+  buildHeap(minHeapArr, size);
+}
+
+minHeap::~minHeap() { delete[] minHeapArr; }
