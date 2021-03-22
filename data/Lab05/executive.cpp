@@ -92,11 +92,14 @@ void executive::Print() {
       } else if (choice == 4) {
         minheap.SearchNearestRestaurant();
       } else if (choice == 5) {
-        cout << "by distance\n";
         maxheap.SearchMostReviewedRestaurant();
+        cout << "=========================================================\n";
       } else if (choice == 6) {
+        cout << "by distance\n";
         minheap.LevelOrder();
+        cout << "=========================================================\n";
       } else if (choice == 7) {
+        cout << "by Review Count\n";
         maxheap.LevelOrder();
         cout << "=========================================================\n\n";
       } else if (choice == 8) {

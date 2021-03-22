@@ -52,7 +52,6 @@ void maxHeap::LevelOrder() {
 void maxHeap::SearchMostReviewedRestaurant() {
   cout << "Most reviewed restaurant: " << maxHeapArr[0].GetName() << endl;
   cout << "Number of reviews: " << maxHeapArr[0].GetCountView() << endl;
-  cout << "============================================\n";
 }
 
 void maxHeap::RemoveMostReviewedRestaurant() {
