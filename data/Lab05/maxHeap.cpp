@@ -4,11 +4,14 @@
 maxHeap::maxHeap() {
   maxHeapArr = new Node[MAXSIZE]();
   size = 0;
+  index = -1;
 }
 
 void maxHeap::Insert(string name, float distance, int count_view) {
-  maxHeapArr[size].SetValue(name, distance, count_view);
+  index++;
+  maxHeapArr[index].SetValue(name, distance, count_view);
   size++;
+  buildHeap();
 }
 
 int maxHeap::GetSize() { return size; }
@@ -130,8 +133,7 @@ int maxHeap::GetHeight(Node *temp, int index) {
 void maxHeap::buildHeap() { buildHeap(maxHeapArr, GetSize()); }
 
 void maxHeap::buildHeap(Node *arr, int size) {
-  int last_node_Index = size - 1;
-  int parentNode = floor((last_node_Index - 1) / 3);
+  int parentNode = floor((index - 1) / 3);
   for (int i = parentNode; i >= 0; i--) {
     heapify(arr, size, i);
   }

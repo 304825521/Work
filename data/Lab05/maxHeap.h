@@ -25,6 +25,7 @@ private:
   int size = 0;
   Node *maxHeapArr;
   const int MAXSIZE = 20;
+  int index = -1;
 
   void buildHeap(Node *arr, int size);
 };

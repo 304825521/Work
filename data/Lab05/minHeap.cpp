@@ -3,11 +3,14 @@
 minHeap::minHeap() {
   minHeapArr = new Node[MAXSIZE]();
   size = 0;
+  index = -1;
 }
 
 void minHeap::Insert(string name, float distance, int count_view) {
-  minHeapArr[size].SetValue(name, distance, count_view);
+  index++;
+  minHeapArr[index].SetValue(name, distance, count_view);
   size++;
+  buildHeap();
 }
 
 int minHeap::GetSize() { return size; }
@@ -54,19 +57,13 @@ void minHeap::heapify(Node *arr, int size, int i) {
   int c2 = 3 * i + 2;
   int c3 = 3 * i + 3;
   int minIndex = i;
-  if (c1 < size && arr[c1].GetDistance() < arr[minIndex].GetDistance() &&
-      arr[c1].GetDistance() < arr[c2].GetDistance() &&
-      arr[c1].GetDistance() < arr[c3].GetDistance()) {
+  if (c1 < size && arr[c1].GetDistance() < arr[minIndex].GetDistance()) {
     minIndex = c1;
   }
-  if (c2 < size && arr[c2].GetDistance() < arr[minIndex].GetDistance() &&
-      arr[c2].GetDistance() < arr[c1].GetDistance() &&
-      arr[c2].GetDistance() < arr[c3].GetDistance()) {
+  if (c2 < size && arr[c2].GetDistance() < arr[minIndex].GetDistance()) {
     minIndex = c2;
   }
-  if (c3 < size && arr[c3].GetDistance() < arr[minIndex].GetDistance() &&
-      arr[c3].GetDistance() < arr[c1].GetDistance() &&
-      arr[c3].GetDistance() < arr[c2].GetDistance()) {
+  if (c3 < size && arr[c3].GetDistance() < arr[minIndex].GetDistance()) {
     minIndex = c3;
   }
   if (minIndex != i) {
@@ -109,8 +106,7 @@ int minHeap::GetHeight(Node *temp, int index) {
 }
 
 void minHeap::buildHeap(Node *arr, int size) {
-  int last_node_Index = size - 1;
-  int parentNode = floor((last_node_Index - 1) / 3);
+  int parentNode = floor((index - 1) / 3);
   for (int i = parentNode; i >= 0; i--) {
     heapify(arr, size, i);
   }

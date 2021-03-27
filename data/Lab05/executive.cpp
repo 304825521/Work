@@ -30,8 +30,6 @@ executive::executive(std::string _filename) {
     cout << "Cannot open the files!\n";
   }
   input.close();
-  maxheap.buildHeap();
-  minheap.buildHeap();
   Print();
 }
 
@@ -77,9 +75,7 @@ void executive::Print() {
           throw -1;
         } else {
           maxheap.Insert(name, distance, count_review);
-          maxheap.buildHeap();
           minheap.Insert(name, distance, count_review);
-          minheap.buildHeap();
           cout << "Output: Record is successfully inserted.\n";
           cout << "=========================================================\n";
         }

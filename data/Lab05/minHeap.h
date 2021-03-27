@@ -25,6 +25,7 @@ public:
 
 private:
   int size = 0;
+  int index = -1;
   Node *minHeapArr;
   const int MAXSIZE = 20;
 

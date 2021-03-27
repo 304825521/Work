@@ -19,7 +19,6 @@ executive::executive(std::string _filename) {
     cout << "Cannot open the files!\n";
   }
   input.close();
-  myheap.BuildHeap();
   Print();
 }
 
@@ -38,7 +37,7 @@ void executive::Print() {
       cout << "=====================================================\n";
       if (choice == 1) {
         cout << "Output:\n";
-        myheap.LevelOrder();
+        myheap.BuildHeap();
         cout << "=====================================================\n";
       } else if (choice == 2) {
         cout << "Enter element to be inserted:";
@@ -48,11 +47,9 @@ void executive::Print() {
         cout << "Output: " << key << " has been inserted successfully!\n";
         cout << "=====================================================\n";
       } else if (choice == 3) {
-        cout << "Enter element to be Deleted:";
-        int key;
-        cin >> key;
-        myheap.Delete(key);
-        cout << "Output: " << key << " has been deleted successfully!\n";
+        int min = myheap.GetMinNode();
+        myheap.Delete();
+        cout << "Output: " << min << " has been deleted successfully!\n";
         cout << "=====================================================\n";
       } else if (choice == 4) {
         myheap.MinLevelElements();
@@ -73,6 +70,10 @@ void executive::Print() {
     if (num == -1) {
       cout << "Input Error!\n";
       cout << "=========================================================\n";
+    } else if (num == -2) {
+      cout << "Delete the empty tree!\n";
+      cout << "=========================================================\n";
+      exit(1);
     }
   }
 }

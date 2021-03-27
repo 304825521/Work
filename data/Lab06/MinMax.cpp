@@ -1,26 +1,95 @@
 #include "MinMax.h"
+#include <cmath>
 #include <math.h>
+#include <type_traits>
 MinMax::MinMax() {
   m_Arr = new Node[MAXSIZE]();
   m_size = 0;
+  m_index = -1;
 }
 
 MinMax::~MinMax() { delete[] m_Arr; }
 
-void MinMax::HeapifyMax(Node *arr, int size, int i) {
-  int c1 = 2 * i + 1;
-  int c2 = 2 * i + 2;
-  int max = i;
-  if (c1 < size && arr[c1].GetValue() > arr[max].GetValue()) {
-    max = c1;
+void MinMax::Heapify(Node *arr, int size, int i, bool isMinLevel) {}
+
+int MinMax::GetHeight(Node *temp, int index) {
+  int height = 0;
+  while (temp[index].GetValue() != -1) {
+    index = 2 * index + 1;
+    height++;
   }
-  if (c2 < size && arr[c2].GetValue() > arr[max].GetValue()) {
-    max = c2;
+  return height;
+}
+
+int MinMax::GetParent(int index) { return floor((index - 1) / 2); }
+
+int MinMax::GetMaxNode(Node *arr, int index) {
+  int returnIndex = 0;
+  while (GetParent(index) != 0) {
+    index = GetParent(index);
   }
-  if (max != i) {
-    swap(arr, max, i);
-    HeapifyMax(arr, size, max);
+  returnIndex = index;
+  return returnIndex;
+}
+
+void MinMax::Swap(Node *arr, int i, int j) {
+  Node *temp = new Node(arr[i].GetValue());
+  arr[i].SetValue(arr[j].GetValue());
+  arr[j].SetValue(temp->GetValue());
+  temp->SetValue(-1);
+  delete temp;
+}
+
+void MinMax::BuildHeap() {
+  int height = GetHeight(m_Arr, 0);
+  // cout << FindSecondSmallestIndex() << endl;
+  for (int i = 1; i <= height; i++) {
+    if (i == 1) {
+      cout << m_Arr[0].GetValue() << "," << endl;
+    } else if (i >= 2) {
+      int minNode = pow(2, i - 1);
+      int leftNodeIndex = 0;
+      int temp = 0;
+      for (int j = 1; j < i; j++) {
+        leftNodeIndex = 2 * temp + 1;
+        temp = leftNodeIndex;
+      }
+      int count = 0;
+      while (count < minNode) {
+        if (m_Arr[count + leftNodeIndex].GetValue() != -1) {
+          cout << m_Arr[leftNodeIndex + count].GetValue() << ",";
+        }
+        count++;
+      }
+      cout << endl;
+    }
   }
+}
+
+void MinMax::Delete() {
+  if (m_size == 0) {
+    throw -2;
+  }
+  if (m_size == 1) { // case 1: only one
+    m_Arr[0].SetValue(-1);
+  } else if (m_size == 2) { // case 2: have one child
+    Swap(m_Arr, 0, 1);
+    m_Arr[1].SetValue(-1);
+  } else if (m_size >= 3) { // case 3: have more one child
+    int secondIndex = GetSecondSmallestIndex();
+    int smallvalue = m_Arr[secondIndex].GetValue();
+    int lastvalue = m_Arr[m_size - 1].GetValue();
+    if (lastvalue > smallvalue) {
+      m_Arr[0].SetValue(smallvalue);
+      m_Arr[secondIndex].SetValue(lastvalue);
+      m_Arr[m_size - 1].SetValue(-1);
+      int parent = GetParent(secondIndex);
+      if (m_Arr[secondIndex].GetValue() < m_Arr[parent].GetValue()) {
+        HeapifyMin(m_Arr, m_size, secondIndex);
+      }
+    }
+  }
+  m_size--;
 }
 
 void MinMax::HeapifyMin(Node *arr, int size, int i) {
@@ -36,45 +105,41 @@ void MinMax::HeapifyMin(Node *arr, int size, int i) {
     min = c2;
   }
   if (min != i) {
-    swap(arr, min, i);
+    Swap(arr, min, i);
     HeapifyMin(arr, size, min);
   }
 }
 
-void MinMax::swap(Node *arr, int i, int j) {
-  Node *temp = new Node(arr[i].GetValue());
-  arr[i].SetValue(arr[j].GetValue());
-  arr[j].SetValue(temp->GetValue());
-  temp->SetValue(-1);
-  delete temp;
-}
+int MinMax::GetMinNode() { return m_Arr[0].GetValue(); }
 
-int MinMax::GetHeight(Node *temp, int index) {
-  int height = 0;
-  while (temp[index].GetValue() != -1) {
-    index = 2 * index + 1;
-    height++;
-  }
-  return height;
-}
-
-int MinMax::GetSize() { return m_size; }
-
-int MinMax::Find(int key) {
+bool MinMax::Find(int key) {
   for (int i = 0; i < m_size; i++) {
     if (m_Arr[i].GetValue() == key) {
-      return i;
+      return true;
     }
   }
-  return -1;
+  return false;
 }
 
-//=========================== Public Main Function ==================
-void MinMax::BuildHeap() { BuildHeap(m_Arr, GetSize()); }
+int MinMax::GetDeleteIndex(int key) {
+  int temp = -1;
+  for (int i = 0; i < m_size; i++) {
+    if (m_Arr[i].GetValue() == key) {
+      temp = i;
+    }
+  }
+  return temp;
+}
 
-void MinMax::Insert(int key) { Insert(key, m_Arr); }
-
-void MinMax::Delete(int key) { Delete(key, m_Arr); }
+int MinMax::GetSecondSmallestIndex() {
+  int minIndex = 1;
+  for (int i = 1; i < m_size; i++) {
+    if (m_Arr[i].GetValue() < m_Arr[minIndex].GetValue()) {
+      minIndex = i;
+    }
+  }
+  return minIndex;
+}
 
 void MinMax::MinLevelElements() {
   int height = GetHeight(m_Arr, 0);
@@ -126,80 +191,43 @@ void MinMax::MaxLevelElements() {
   }
 }
 
-void MinMax::LevelOrder() {
-  int height = GetHeight(m_Arr, 0);
-  for (int i = 1; i <= height; i++) {
-    if (i == 1) {
-      cout << m_Arr[0].GetValue() << "," << endl;
-    } else if (i >= 2) {
-      int minNode = pow(2, i - 1);
-      int leftNodeIndex = 0;
-      int temp = 0;
-      for (int j = 1; j < i; j++) {
-        leftNodeIndex = 2 * temp + 1;
-        temp = leftNodeIndex;
-      }
-      int count = 0;
-      while (count < minNode) {
-        if (m_Arr[count + leftNodeIndex].GetValue() != -1) {
-          cout << m_Arr[leftNodeIndex + count].GetValue() << ",";
-        }
-        count++;
-      }
-      cout << endl;
-    }
-  }
-}
+void MinMax::Insert(int key) { Insert(key, m_Arr); }
 
-//=========================== Private Main Function ==================
-void MinMax::BuildHeap(Node *root, int size) {
-  int last_node = size - 1;
-  int parent = (last_node - 1) / 2;
-  int i;
+void MinMax::Insert(int key, Node *arr) {
 
-  int height = GetHeight(m_Arr, 0); // 4
-  for (int j = 1; j <= height - 1; j++) {
-    int maxNodeInCurrentLevel = pow(2, j - 1);
-    int leftNodeIndex = 0;
-    int temp = 0;
-    for (int k = 1; k < j; k++) {
-      leftNodeIndex = 2 * temp + 1;
-      temp = leftNodeIndex;
-    }
-
-    int count = 0;
-    while (count < maxNodeInCurrentLevel) {
-      if (m_Arr[count + maxNodeInCurrentLevel].GetValue() != -1) {
-        if ((height - 1 - j) % 2 == 0) {
-          for (i = parent; i >= leftNodeIndex; i--) {
-            HeapifyMin(m_Arr, size, i);
-          }
-        } else if ((height - 1 - j) % 2 == 1) {
-          for (i = parent; i >= leftNodeIndex; i--) {
-            HeapifyMax(m_Arr, size, i);
-          }
-        }
-      }
-      count++;
-    }
-  }
-}
-
-void MinMax::Insert(int key, Node *root) {
-  m_Arr[m_size].SetValue(key);
-  BuildHeap();
-  m_size++;
-}
-
-void MinMax::Delete(int key, Node *root) {
-  if (Find(key) == -1) {
-    cout << "Cannot find the key in the tree!\n";
+  m_index++;
+  if (m_index == 0) {
+    arr[m_index].SetValue(key);
   } else {
-    for (int i = Find(key); i < m_size; i++) {
-      swap(m_Arr, i, i + 1);
+    arr[m_index].SetValue(key);
+
+    if (!isMinLevel) {
+      int parent = GetParent(m_index);
+      if (key < arr[parent].GetValue()) {
+        Swap(arr, m_index, parent);
+        if (arr[parent].GetValue() < arr[0].GetValue()) {
+          Swap(arr, parent, 0);
+        }
+      } else if (key > arr[parent].GetValue()) {
+        int maxNodeIndex = GetMaxNode(arr, m_index);
+        Swap(arr, m_index, maxNodeIndex);
+      }
+    } else if (isMinLevel) {
+      int parent = GetParent(m_index);
+      if (key < arr[parent].GetValue()) {
+        if (key < arr[0].GetValue()) {
+          Swap(arr, m_index, 0);
+        }
+      } else if (key > arr[parent].GetValue()) {
+        Swap(arr, m_index, parent);
+      }
     }
-    m_Arr[m_size].SetValue(-1);
   }
-  m_size--;
-  BuildHeap(m_Arr, m_size);
+  m_size++;
+  count++;
+  if (count >= LevelChangeIndex) {
+    LevelChangeIndex = pow(2, GetHeight(arr, 0));
+    isMinLevel = !isMinLevel;
+    count = 0;
+  }
 }
