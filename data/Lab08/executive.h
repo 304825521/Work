@@ -9,7 +9,8 @@ private:
 public:
   executive(string _filename);
   ~executive();
-
+  LeftListHeap myheap;
+  LeftListHeap myheapB;
   void Print();
 };
 #endif
