@@ -11,5 +11,9 @@ public:
   ~executive();
 
   void Print();
+  int m_size = 0;
+  int array[99];
+
+  DisjointSets mySet;
 };
 #endif

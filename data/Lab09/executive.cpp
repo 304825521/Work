@@ -9,17 +9,27 @@ executive::executive(std::string _filename) {
   input.open(_filename);
   if (input.is_open()) {
     while (!input.eof()) {
-      // getline(input, temp);
-      // int num = stoi(temp);
       input >> temp;
-      cout << temp;
-      // TODO: need add function
+      array[m_size] = temp;
+      m_size++;
     }
   } else {
     cout << "Cannot open the files!\n";
   }
   input.close();
-  // Print();
+  Print();
+  // mySet.MakeSet(array, m_size);
+  // mySet.SetUnionByRank(1, 2);
+  // mySet.SetUnionByRank(3, 4);
+  // mySet.SetUnionByRank(5, 6);
+  // mySet.SetUnionByRank(7, 8);
+  // mySet.SetUnionByRank(2, 4);
+  // mySet.SetUnionByRank(2, 5);
+  // mySet.SetUnionByRank(6, 8);
+  // mySet.PathPrint(1);
+  // mySet.PathCompression(7);
+  // mySet.PathCompression(1);
+  // mySet.PathPrint(1);
 }
 
 executive::~executive() {}
@@ -36,9 +46,8 @@ void executive::Print() {
       cin >> choice;
       cout << "=====================================================\n";
       if (choice == 1) {
-        // TODO: need add function
+        mySet.MakeSet(array, m_size);
         cout << "Output: The disjoint sets have been constructed!\n";
-        cout << endl;
         cout << "=====================================================\n";
       } else if (choice == 2) {
         int num1, num2;
@@ -48,20 +57,22 @@ void executive::Print() {
         cin >> num1;
         cout << "Enter Second number:";
         cin >> num2;
-        // TODO: need add function
+        mySet.SetUnionByRank(num1, num2);
+        cout << "Output: Union on " << num1 << " and " << num2
+             << " has been done. The represnetative element is "
+             << mySet.GetRepresentValue(num2) << endl;
         cout << "=====================================================\n";
       } else if (choice == 3) {
         int num;
         cout << "Output: Enter the element you want to find:";
         cin >> num;
-
-        bool find = false;
-        // TODO: need add function
-        if (find == false) {
+        int find = mySet.Find(num);
+        if (find == -1) {
           cout << "Sorry! " << num << " is not found!\n";
         } else {
-          cout << "Output: Element " << num
-               << " has been found successfully.\n";
+          cout << "Output: Element " << num << " has been found successfully."
+               << "The representative element is "
+               << mySet.GetRepresentValue(num) << endl;
         }
         cout << "=====================================================\n";
       } else if (choice == 4) {
@@ -69,14 +80,16 @@ void executive::Print() {
         cout << "Output: Enter the element on whose set you would want to "
                 "perform path compression.\n";
         cin >> num;
-        // TODO: need add function
-        cout << "Output: Path compression has been done successfully.\n";
+        mySet.PathCompression(num);
+        cout << "Output: Path compression has been done successfully."
+             << "The representative element is " << mySet.GetRepresentValue(num)
+             << endl;
         cout << "=====================================================\n";
       } else if (choice == 5) {
         cout << "Output: Enter the element you want to find the path for:";
         int num;
         cin >> num;
-        // TODO: need add function
+        mySet.PathPrint(num);
         cout << "=====================================================\n";
       } else if (choice == 6) {
         cout << "Output: Bye Bye!\n";
